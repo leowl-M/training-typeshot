@@ -103,6 +103,46 @@ textarea {
   min-width: 280px;
 }
 
+/* Preset buttons */
+.preset-btn {
+  position: relative;
+  width: 100%; aspect-ratio: 1;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #404040;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.15s;
+  background: none;
+  padding: 0;
+}
+.preset-btn:hover {
+  border-color: #737373;
+  transform: scale(1.08);
+}
+.preset-swatch {
+  position: absolute; inset: 0;
+  display: block;
+}
+.preset-swatch-inner {
+  position: absolute;
+  inset: 30% 25%;
+  display: block;
+  border-radius: 2px;
+}
+
+/* REC indicator */
+.rec-indicator {
+  font-size: 10px;
+  font-weight: 700;
+  color: #ef4444;
+  letter-spacing: 0.05em;
+  animation: rec-blink 1s ease-in-out infinite;
+}
+@keyframes rec-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
 /* Mobile sidebar */
 @media (max-width: 767px) {
   #sidebar {
