@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="TypeShot — Typography Playground" />
+  <title>TypeShot</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.9.2/lib/p5.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+
+      function openSidebar()  { sidebar.classList.add('open');    overlay.classList.add('active'); }
+      function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('active'); }
+
+      document.getElementById('menu-toggle')?.addEventListener('click', openSidebar);
+      overlay?.addEventListener('click', closeSidebar);
+    });
+  </script>
+</head>
+<body class="flex flex-col h-screen w-full bg-neutral-950 text-neutral-300 font-sans overflow-hidden">
+
+  <div class="flex flex-1 min-h-0 flex-col md:flex-row">
+
+    <div id="sidebar-overlay" class="sidebar-overlay md:hidden"></div>
+
+    <aside
+      id="sidebar"
+      class="w-full md:w-80 shrink-0 bg-neutral-900 p-6 flex flex-col overflow-y-auto border-b md:border-b-0 md:border-r border-neutral-800 z-10 custom-scrollbar"
+      aria-label="Pannello parametri"
+    >
+
+      <!-- Header -->
+      <div class="pb-6 border-b border-neutral-800 mb-6">
+        <h1 class="text-lg font-medium text-white tracking-tight">TypeShot</h1>
+        <div class="flex gap-1.5 mt-4">
+          <button
+            type="button"
+            id="randomizeBtn"
+            class="flex-1 flex items-center justify-center gap-2 min-h-10 bg-neutral-800 border border-neutral-700 hover:bg-neutral-700 text-neutral-400 hover:text-white text-xs font-medium rounded transition"
+          >
+            <i data-lucide="shuffle" class="w-3.5 h-3.5"></i>
+            Rigenera
+          </button>
+        </div>
+      </div>
+
+      <!-- Testo -->
+      <div class="flex flex-col gap-3 mb-6 pb-6 border-b border-neutral-800">
+        <h2 class="text-xs font-medium text-neutral-400 flex items-center gap-2">
+          <i data-lucide="type" class="w-3.5 h-3.5"></i> Testo
+        </h2>
+        <textarea
+          id="textInput"
+          rows="6"
+          placeholder="Scrivi il testo qui...&#10;Ogni riga diventa un blocco"
+          class="w-full bg-neutral-800 border border-neutral-700 text-neutral-200 text-xs rounded px-3 py-2 resize-none custom-scrollbar placeholder:text-neutral-600 focus:border-neutral-500 focus:outline-none transition"
+        >I do not need
+to buy more
+cool furniture
+and clothes
+to prove
+to my friends
+that I'm creative.</textarea>
+        <div>
+          <label class="text-[10px] text-neutral-500 block mb-1.5">Dividi per</label>
+          <select id="splitMode" class="w-full bg-neutral-800 border border-neutral-700 text-neutral-300 text-[10px] rounded px-2 py-1.5 cursor-pointer">
+            <option value="line">Riga</option>
+            <option value="word">Parola</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Tipografia -->
+      <div class="flex flex-col gap-4 mb-6 pb-6 border-b border-neutral-800">
+        <h2 class="text-xs font-medium text-neutral-400 flex items-center gap-2">
+          <i data-lucide="a-large-small" class="w-3.5 h-3.5"></i> Tipografia
+        </h2>
+
+        <div>
+          <label class="text-[10px] text-neutral-500 block mb-1.5">Font</label>
+          <select id="fontFamily" class="w-full bg-neutral-800 border border-neutral-700 text-neutral-300 text-[10px] rounded px-2 py-1.5 cursor-pointer">
+            <option value="Inter">Inter</option>
+            <option value="Helvetica">Helvetica</option>
+            <option value="Playfair Display">Playfair Display</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="text-[10px] text-neutral-500 block mb-1.5">Peso</label>
+          <select id="fontWeight" class="w-full bg-neutral-800 border border-neutral-700 text-neutral-300 text-[10px] rounded px-2 py-1.5 cursor-pointer">
+            <option value="100">Thin (100)</option>
+            <option value="200">Extra Light (200)</option>
+            <option value="300">Light (300)</option>
+            <option value="400">Regular (400)</option>
+            <option value="500">Medium (500)</option>
+            <option value="600">Semi Bold (600)</option>
+            <option value="700" selected>Bold (700)</option>
+            <option value="800">Extra Bold (800)</option>
+            <option value="900">Black (900)</option>
+          </select>
+        </div>
+
+        <div>
+          <div class="flex justify-between items-end mb-1">
+            <label class="text-[10px] text-neutral-500">Dimensione Min</label>
+            <span class="text-[10px] font-mono text-neutral-200 tabular-nums" id="fontSizeMinVal">48</span>
+          </div>
+          <input type="range" id="fontSizeMin" min="12" max="200" value="48" class="w-full" />
+        </div>
+
+        <div>
+          <div class="flex justify-between items-end mb-1">
+            <label class="text-[10px] text-neutral-500">Dimensione Max</label>
+            <span class="text-[10px] font-mono text-neutral-200 tabular-nums" id="fontSizeMaxVal">96</span>
+          </div>
+          <input type="range" id="fontSizeMax" min="12" max="300" value="96" class="w-full" />
+        </div>
+
+        <div class="flex items-center gap-2">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" id="italicToggle" class="w-3 h-3 accent-neutral-200 cursor-pointer" />
+            <span class="text-[10px] text-neutral-400">Corsivo</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" id="uppercaseToggle" class="w-3 h-3 accent-neutral-200 cursor-pointer" />
+            <span class="text-[10px] text-neutral-400">Maiuscolo</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Layout -->
+      <div class="flex flex-col gap-4 mb-6 pb-6 border-b border-neutral-800">
+        <h2 class="text-xs font-medium text-neutral-400 flex items-center gap-2">
+          <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i> Layout
+        </h2>
+
+        <div>
+          <label class="text-[10px] text-neutral-500 block mb-1.5">Disposizione</label>
+          <select id="layoutMode" class="w-full bg-neutral-800 border border-neutral-700 text-neutral-300 text-[10px] rounded px-2 py-1.5 cursor-pointer">
+            <option value="stack">Impilato</option>
+            <option value="scatter">Sparso</option>
+            <option value="center">Centrato</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="text-[10px] text-neutral-500 block mb-1.5">Allineamento</label>
+          <select id="textAlign" class="w-full bg-neutral-800 border border-neutral-700 text-neutral-300 text-[10px] rounded px-2 py-1.5 cursor-pointer">
+            <option value="left">Sinistra</option>
+            <option value="center">Centro</option>
+            <option value="right">Destra</option>
+          </select>
+        </div>
+
+        <div>
+          <div class="flex justify-between items-end mb-1">
+            <label class="text-[10px] text-neutral-500">Rotazione Max</label>
+            <span class="text-[10px] font-mono text-neutral-200 tabular-nums" id="rotationVal">0</span>
+          </div>
+          <input type="range" id="rotation" min="0" max="45" value="0" class="w-full" />
+        </div>
+
+        <div>
+          <div class="flex justify-between items-end mb-1">
+            <label class="text-[10px] text-neutral-500">Offset X</label>
+            <span class="text-[10px] font-mono text-neutral-200 tabular-nums" id="offsetXVal">30</span>
+          </div>
+          <input type="range" id="offsetX" min="0" max="200" value="30" class="w-full" />
+        </div>
+
+        <div>
+          <div class="flex justify-between items-end mb-1">
+            <label class="text-[10px] text-neutral-500">Spaziatura</label>
+            <span class="text-[10px] font-mono text-neutral-200 tabular-nums" id="spacingVal">8</span>
+          </div>
+          <input type="range" id="spacing" min="0" max="60" value="8" class="w-full" />
+        </div>
+
+        <div>
+          <div class="flex justify-between items-end mb-1">
+            <label class="text-[10px] text-neutral-500">Margine</label>
+            <span class="text-[10px] font-mono text-neutral-200 tabular-nums" id="marginVal">60</span>
+          </div>
+          <input type="range" id="margin" min="20" max="200" value="60" class="w-full" />
+        </div>
+      </div>
+
+      <!-- Colori -->
+      <div class="flex flex-col gap-4 mb-6 pb-6 border-b border-neutral-800">
+        <h2 class="text-xs font-medium text-neutral-400 flex items-center gap-2">
+          <i data-lucide="palette" class="w-3.5 h-3.5"></i> Colori
+        </h2>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-[10px] text-neutral-500 block mb-1.5">Sfondo</label>
+            <div class="flex items-center gap-2">
+              <input type="color" id="bgColor" value="#e63312" class="color-input" />
+              <input type="text" id="bgColorText" value="#e63312" class="w-full bg-neutral-800 border border-neutral-700 text-neutral-300 text-[10px] rounded px-2 py-1.5 font-mono uppercase" />
+            </div>
+          </div>
+          <div>
+            <label class="text-[10px] text-neutral-500 block mb-1.5">Testo</label>
+            <div class="flex items-center gap-2">
+              <input type="color" id="textColor" value="#1a1a1a" class="color-input" />
+              <input type="text" id="textColorText" value="#1a1a1a" class="w-full bg-neutral-800 border border-neutral-700 text-neutral-300 text-[10px] rounded px-2 py-1.5 font-mono uppercase" />
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-[10px] text-neutral-500 block mb-1.5">Sfondo Blocco</label>
+          <div class="flex items-center gap-2">
+            <input type="color" id="blockBgColor" value="#f5f0e8" class="color-input" />
+            <input type="text" id="blockBgColorText" value="#f5f0e8" class="flex-1 bg-neutral-800 border border-neutral-700 text-neutral-300 text-[10px] rounded px-2 py-1.5 font-mono uppercase" />
+            <label class="flex items-center gap-1.5 cursor-pointer shrink-0">
+              <input type="checkbox" id="blockBgEnabled" checked class="w-3 h-3 accent-neutral-200 cursor-pointer" />
+              <span class="text-[10px] text-neutral-400">On</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-[10px] text-neutral-500 block mb-1.5">Forma Blocco</label>
+          <select id="blockShape" class="w-full bg-neutral-800 border border-neutral-700 text-neutral-300 text-[10px] rounded px-2 py-1.5 cursor-pointer">
+            <option value="rect">Rettangolo</option>
+            <option value="rounded">Arrotondato</option>
+            <option value="pill">Pillola</option>
+            <option value="circle">Cerchio</option>
+            <option value="auto" selected>Auto (cerchio per parole corte)</option>
+            <option value="random">Random</option>
+          </select>
+        </div>
+
+        <div>
+          <div class="flex justify-between items-end mb-1">
+            <label class="text-[10px] text-neutral-500">Padding Blocco</label>
+            <span class="text-[10px] font-mono text-neutral-200 tabular-nums" id="blockPaddingVal">8</span>
+          </div>
+          <input type="range" id="blockPadding" min="0" max="40" value="8" class="w-full" />
+        </div>
+
+        <div>
+          <div class="flex justify-between items-end mb-1">
+            <label class="text-[10px] text-neutral-500">Raggio Bordo</label>
+            <span class="text-[10px] font-mono text-neutral-200 tabular-nums" id="blockRadiusVal">0</span>
+          </div>
+          <input type="range" id="blockRadius" min="0" max="40" value="0" class="w-full" />
+        </div>
+      </div>
+
+      <!-- Animazione -->
+      <div class="flex flex-col gap-4 mb-6 pb-6 border-b border-neutral-800">
+        <h2 class="text-xs font-medium text-neutral-400 flex items-center gap-2">
+          <i data-lucide="film" class="w-3.5 h-3.5"></i> Animazione
+        </h2>
+
+        <div>
+          <label class="text-[10px] text-neutral-500 block mb-1.5">Tipo</label>
+          <select id="animationType" class="w-full bg-neutral-800 border border-neutral-700 text-neutral-300 text-[10px] rounded px-2 py-1.5 cursor-pointer">
+            <option value="none">Nessuna</option>
+            <option value="drift">Drift</option>
+            <option value="wave">Onda</option>
+            <option value="typewriter">Typewriter</option>
+            <option value="shake">Vibrazione</option>
+          </select>
+        </div>
+
+        <div>
+          <div class="flex justify-between items-end mb-1">
+            <label class="text-[10px] text-neutral-500">Intensita</label>
+            <span class="text-[10px] font-mono text-neutral-200 tabular-nums" id="animIntensityVal">10</span>
+          </div>
+          <input type="range" id="animIntensity" min="1" max="50" value="10" class="w-full" />
+        </div>
+
+        <div>
+          <div class="flex justify-between items-end mb-1">
+            <label class="text-[10px] text-neutral-500">Velocita</label>
+            <span class="text-[10px] font-mono text-neutral-200 tabular-nums" id="animSpeedVal">2</span>
+          </div>
+          <input type="range" id="animSpeed" min="0.5" max="10" step="0.5" value="2" class="w-full" />
+        </div>
+      </div>
+
+      <!-- Export -->
+      <div class="flex flex-col gap-4 pb-4">
+        <h2 class="text-xs font-medium text-neutral-400 flex items-center gap-2">
+          <i data-lucide="download" class="w-3.5 h-3.5"></i> Export
+        </h2>
+
+        <div>
+          <div class="flex justify-between items-end mb-1">
+            <label class="text-[10px] text-neutral-500">Fotogrammi</label>
+            <span class="text-[10px] font-mono text-neutral-200 tabular-nums" id="frameCountVal">30</span>
+          </div>
+          <input type="range" id="frameCount" min="1" max="120" value="30" class="w-full" />
+        </div>
+
+        <div>
+          <div class="flex justify-between items-end mb-1">
+            <label class="text-[10px] text-neutral-500">FPS</label>
+            <span class="text-[10px] font-mono text-neutral-200 tabular-nums" id="fpsVal">24</span>
+          </div>
+          <input type="range" id="fps" min="1" max="60" value="24" class="w-full" />
+        </div>
+      </div>
+
+    </aside>
+
+    <div class="flex flex-1 flex-col min-w-0 min-h-0 bg-neutral-950">
+
+      <!-- Toolbar -->
+      <div class="flex items-center gap-2 px-4 py-2 border-b border-neutral-800 shrink-0 bg-neutral-950">
+        <button
+          type="button"
+          id="menu-toggle"
+          class="md:hidden flex items-center justify-center w-8 h-8 bg-neutral-800 border border-neutral-700 hover:bg-neutral-700 text-neutral-400 hover:text-white rounded transition"
+        >
+          <i data-lucide="panel-left" class="w-4 h-4"></i>
+        </button>
+        <span class="text-[10px] text-neutral-600 flex items-center gap-1.5">
+          <i data-lucide="type" class="w-3 h-3"></i>
+          Canvas — 1080 x 1350
+        </span>
+        <div class="ml-auto flex items-center gap-3">
+          <span id="infoFrame" class="text-[10px] text-neutral-600 font-mono">Frame: 0</span>
+          <span class="text-[10px] text-neutral-700">•</span>
+          <span id="infoFps" class="text-[10px] text-neutral-600">FPS: —</span>
+        </div>
+      </div>
+
+      <!-- Canvas stage -->
+      <div
+        id="canvas-stage"
+        class="canvas-stage flex-1 relative flex items-center justify-center overflow-hidden p-6 min-h-0"
+      >
+        <div id="canvasWrap"></div>
+      </div>
+
+      <!-- Footer -->
+      <footer class="shrink-0 border-t border-neutral-800 bg-neutral-950 px-4 py-2.5 flex items-center justify-end gap-2">
+        <button
+          type="button"
+          id="savePngBtn"
+          class="bg-neutral-800 border border-neutral-700 text-neutral-300 hover:bg-neutral-700 hover:text-white text-[11px] font-medium px-3 py-1.5 rounded transition inline-flex items-center gap-1.5"
+        >
+          <i data-lucide="image" class="w-3.5 h-3.5"></i>
+          Salva PNG
+        </button>
+        <button
+          type="button"
+          id="saveSeqBtn"
+          class="bg-white text-black hover:bg-neutral-200 text-[11px] font-medium px-3 py-1.5 rounded transition inline-flex items-center gap-1.5"
+        >
+          <i data-lucide="film" class="w-3.5 h-3.5"></i>
+          Salva Sequenza
+        </button>
+      </footer>
+
+    </div>
+  </div>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <!-- Export progress overlay -->
+  <div id="exportOverlay" class="export-overlay">
+    <div class="export-modal">
+      <div class="text-sm text-white mb-2">Esportazione in corso...</div>
+      <div class="w-full bg-neutral-800 rounded-full h-1.5 mb-2">
+        <div id="exportProgress" class="bg-white h-1.5 rounded-full transition-all" style="width: 0%"></div>
+      </div>
+      <span id="exportStatus" class="text-[10px] text-neutral-400">0 / 0</span>
+    </div>
+  </div>
+
+  <script src="sketch.js"></script>
+</body>
+</html>
